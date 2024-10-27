@@ -1,0 +1,14 @@
+{
+  "name": "factorio-planner",
+  
+  "scripts": {
+    "start": "http-server src -a 127.0.0.1 -p 8080",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "rewire": "^7.0.0",
+    "http-server": "^14.1.1"
+  },
+  "private": true
+}
