@@ -4,6 +4,14 @@
 
 This is a project to create a static website that can be used to plan your facotry ideally whilst supporting mods.
 
+## Testing
+
+Run unit tests:
+
+```shell
+npm run test
+```
+
 ## License
 
 GPL-3.0
