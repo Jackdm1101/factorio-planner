@@ -1,0 +1,10 @@
+{
+  "name": "factorio-planner",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "rewire": "^7.0.0"
+  }
+}
