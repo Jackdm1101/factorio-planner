@@ -4,7 +4,7 @@
   "scripts": {
     "start": "http-server src -a 127.0.0.1 -p 8080",
     "test": "jest",
-    "create-recipes": "node script/recipeToJson.js"
+    "genRecipes": "node script/recipeToJson.js"
   },
   "devDependencies": {
     "jest": "^29.7.0",
