@@ -15,8 +15,50 @@ function main() {
 }
 
 function processFile(fileBuffer) {
-    let index = fileBuffer.indexOf("{\n    type = ");
-    console.log(fileBuffer.toString()[index]);
+    const bufProc = new BufferProcessor(fileBuffer);
+
+    const recipeNameStr = bufProc.getStrAfter('type = "recipe",\n    name = ');
+    bufProc.goto('ingredients =\n');
+
+    const entries = new Array(bufProc.countEntries());
+    for(let i = 0; i < entries.length; i++) {
+        // logic here
+    }
+}
+
+
+class BufferProcessor {
+    constructor(fileBuf) {
+        this.fileBuf = fileBuf;
+        this.index = 0;
+    }
+
+    getStrAfter(str) {
+        const lIndex = this.fileBuf.indexOf(str, this.index) + str.length + 1;
+        this.index = this.fileBuf.indexOf('"', lIndex);
+        return this.fileBuf.slice(lIndex, this.index).toString();
+    }
+
+    goto(str) {
+        this.index = this.fileBuf.indexOf(str) + str.length;
+    }
+
+    countEntries() {
+        const startIndex = this.fileBuf.indexOf('{', this.index);
+        const searchStr = this.fileBuf.slice(
+            this.index,
+            startIndex
+        ).toString() + '},';
+        const endIndex = this.fileBuf.indexOf(searchStr, startIndex);
+
+        let numLines = 0;
+        let i = startIndex + searchStr.length;
+        while(i < endIndex) {
+            numLines += 1;
+            i = this.fileBuf.indexOf('\n', i + 1);
+        }
+        return numLines - 1;
+    }
 }
 
 main()
