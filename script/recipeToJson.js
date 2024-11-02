@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 
-function main() {
+async function main() {
     if (process.argv.length !== 3) {
         console.log('No file specified');
         return;
@@ -11,54 +11,27 @@ function main() {
         return;
     }
 
-    processFile(fs.readFileSync(process.argv[2]));
+    const stream = fs.createReadStream(process.argv[2])
+        .pause()    
+        .once('readable', () => handleFile(stream)
+    );
 }
 
-function processFile(fileBuffer) {
-    const bufProc = new BufferProcessor(fileBuffer);
-
-    const recipeNameStr = bufProc.getStrAfter('type = "recipe",\n    name = ');
-    bufProc.goto('ingredients =\n');
-
-    const entries = new Array(bufProc.countEntries());
-    for(let i = 0; i < entries.length; i++) {
-        // logic here
-    }
+function handleFile(stream) {
+    console.log(stream.read(10).toString());
 }
 
+// FIND_START:'data:extend\n({\n    {'
 
-class BufferProcessor {
-    constructor(fileBuf) {
-        this.fileBuf = fileBuf;
-        this.index = 0;
-    }
+// recipeIndex = FIND_END: '{\n    type = "recipe",'
 
-    getStrAfter(str) {
-        const lIndex = this.fileBuf.indexOf(str, this.index) + str.length + 1;
-        this.index = this.fileBuf.indexOf('"', lIndex);
-        return this.fileBuf.slice(lIndex, this.index).toString();
-    }
+// recipe.name = REGEX_MATCH[1]: 'name = "(.*)",'
 
-    goto(str) {
-        this.index = this.fileBuf.indexOf(str) + str.length;
-    }
+// To get ingredients:
+    // REGEX_SUBSTR: the entire block
+    // REGEX_SPLIT: into raw ingredients lines
+    // REGEX_MATCH: '{type = "(.*)", name = "(.*)", amount = (.*)}'
 
-    countEntries() {
-        const startIndex = this.fileBuf.indexOf('{', this.index);
-        const searchStr = this.fileBuf.slice(
-            this.index,
-            startIndex
-        ).toString() + '},';
-        const endIndex = this.fileBuf.indexOf(searchStr, startIndex);
+// recipe.energy = REGEX_MATCH[1]: 'energy_required = (.*),'
 
-        let numLines = 0;
-        let i = startIndex + searchStr.length;
-        while(i < endIndex) {
-            numLines += 1;
-            i = this.fileBuf.indexOf('\n', i + 1);
-        }
-        return numLines - 1;
-    }
-}
-
-main()
+main();
