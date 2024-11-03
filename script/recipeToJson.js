@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 
-async function main() {
+function main() {
     if (process.argv.length !== 3) {
         console.log('No file specified');
         return;
@@ -11,14 +11,37 @@ async function main() {
         return;
     }
 
-    const stream = fs.createReadStream(process.argv[2])
-        .pause()    
-        .once('readable', () => handleFile(stream)
-    );
+    const parser = new RecipeParser(process.argv[2]);
+    parser.goToDataStart();
+    parser.read(10);
 }
 
-function handleFile(stream) {
-    console.log(stream.read(10).toString());
+class RecipeParser {
+    constructor(file) {
+        this.stream = fs.createReadStream(file, {autoClose: false});
+        this.stream.pause();
+    }
+
+    #ioFuncBuilder(func, args) {
+        console.log("called");
+        return (...args) => {
+            this.stream.once('readable', () => func(...args));
+        }
+    }
+
+    goToDataStart = this.#ioFuncBuilder(() => {
+        const initialData = 'data:extend\n({\n  {\n    ';
+        let i = 0;
+        while (i !== initialData.length - 1) {
+            const char = this.stream.read(1).toString();
+            if (char === initialData[i]) { i += 1; }
+            else { i = 0; }
+        }
+    });
+
+    read = this.#ioFuncBuilder((n) => {
+        console.log(this.stream.read(n).toString());
+    });
 }
 
 // FIND_START:'data:extend\n({\n    {'
