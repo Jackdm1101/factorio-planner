@@ -23,7 +23,6 @@ class RecipeParser {
     }
 
     #ioFuncBuilder(func, args) {
-        console.log("called");
         return (...args) => {
             this.stream.once('readable', () => func(...args));
         }
