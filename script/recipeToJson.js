@@ -12,7 +12,17 @@ function main() {
     }
 
     const parser = new RecipeParser(process.argv[2]);
-    console.log(parser.getNextRecipe());
+    const recipes = [];
+
+    let recipe = {};
+    while (recipe !== null) {
+        recipe = parser.getNextRecipe()
+        if (recipe) recipes.push(recipe);
+    }
+
+    const fd = fs.openSync('src/recipes.json', 'w+');
+    fs.writeSync(fd, Buffer.from(JSON.stringify(recipes), 'utf-8'));
+    fs.close(fd);
 }
 
 class RecipeParser {
@@ -36,23 +46,44 @@ class RecipeParser {
 
     getNextRecipe() {
         const recipeStr = this.#getRecipeStr();
+        if (!recipeStr) return null;
+
         const out = {}
         out.name = recipeStr.match(
             /name = "(.*)",/)[1];
-        out.enabled = recipeStr.match(
-            /enabled = (.*),/)[1] == 'true' ? true : false;
-        const ingredients = recipeStr.matchAll(
-            /{type = "(.*)", name = "(.*)", amount = (.*)}/g);
+        if (/enabled = (.*),/.test(recipeStr)) {
+            out.enabled = recipeStr.match(
+                /enabled = (.*),/)[1] == 'true' ? true : false;
+        }
+
+        const ingredientsStr = recipeStr.match(/ingredients.*{.*({.*})*.*},\n/s)[0];
+        const ingredients = ingredientsStr.matchAll(
+            /{type *= *"(.+?)", *name *= *"(.+?)", *amount *= *(.+?)},?/g);
         out.ingredients = [];
         for (const ingredient of ingredients) {
             out.ingredients.push({
                 type: ingredient[1],
                 name: ingredient[2],
-                count: ingredient[3]
+                amount: parseInt(ingredient[3], 10),
             });
         }
-        // Energy
-        // Results
+
+        if (/energy_required = (.*),/.test(recipeStr)){
+            out.energy = parseInt(recipeStr.match(
+                /energy_required = (.*),/)[1], 10);
+        }
+
+        const resultsStr = recipeStr.match(/results.*{.*({.*})*.*}/s)[0];
+        const results = resultsStr.matchAll(
+            /{type *= *"(.+?)", *name *= *"(.+?)", *amount *= *(.+?)},?/g);
+        out.results = [];
+            for (const result of results) {
+                out.results.push({
+                    type: result[1],
+                    name: result[2],
+                    amount: parseInt(result[3], 10),
+                });
+            }
         return out;
     }
 
@@ -63,7 +94,7 @@ class RecipeParser {
         let i = 0;
         const buf = new Buffer.allocUnsafe(1);
         while (i !== endData.length) {
-            fs.readSync(this.fd, buf);
+            if (fs.readSync(this.fd, buf) === 0) return null;
             const char = buf.toString();
 
             if (char === endData[i]) { i += 1; }
