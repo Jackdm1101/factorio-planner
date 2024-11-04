@@ -19,10 +19,11 @@ function main() {
         recipe = parser.getNextRecipe()
         if (recipe) recipes.push(recipe);
     }
+    parser.close();
 
     const fd = fs.openSync('src/recipes.json', 'w+');
     fs.writeSync(fd, Buffer.from(JSON.stringify(recipes), 'utf-8'));
-    fs.close(fd);
+    fs.closeSync(fd);
 }
 
 class RecipeParser {
