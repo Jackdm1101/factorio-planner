@@ -6,8 +6,16 @@ This is a project to create a static website that can be used to plan your facto
 
 ## To Run
 
+On first install:
+
 ```shell
-npm run genRecipes <path_to_recipe.lua>
+npm run genRecipes "<path/recipe.lua>"
+```
+
+Host site on localhost:
+
+```shell
+npm start
 ```
 
 ## Testing
