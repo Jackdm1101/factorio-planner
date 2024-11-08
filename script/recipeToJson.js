@@ -1,3 +1,4 @@
+const { match } = require('node:assert');
 const fs = require('node:fs');
 
 function main() {
@@ -11,18 +12,20 @@ function main() {
         return;
     }
 
-    const parser = new RecipeParser(process.argv[2]);
-    const recipes = [];
+    const fd = fs.openSync('src/recipes.json', 'w+');
+    fs.writeSync(fd, Buffer.from('['));
 
-    let recipe = {};
-    while (recipe !== null) {
-        recipe = parser.getNextRecipe()
-        if (recipe) recipes.push(recipe);
+    const parser = new RecipeParser(process.argv[2]);
+    let recipe = parser.getNextRecipe();
+    while (recipe) {
+        fs.writeSync(fd, Buffer.from(JSON.stringify(recipe)));
+        recipe = parser.getNextRecipe();
+        if (recipe)
+            fs.writeSync(fd, Buffer.from(','));
     }
     parser.close();
 
-    const fd = fs.openSync('src/recipes.json', 'w+');
-    fs.writeSync(fd, Buffer.from(JSON.stringify(recipes), 'utf-8'));
+    fs.writeSync(fd, Buffer.from(']'));
     fs.closeSync(fd);
 }
 
@@ -49,43 +52,21 @@ class RecipeParser {
         const recipeStr = this.#getRecipeStr();
         if (!recipeStr) return null;
 
-        const out = {}
-        out.name = recipeStr.match(
-            /name = "(.*)",/)[1];
-        if (/enabled = (.*),/.test(recipeStr)) {
-            out.enabled = recipeStr.match(
-                /enabled = (.*),/)[1] == 'true' ? true : false;
+        return {
+            name: this.#getKey('name', recipeStr),
+            enabled: this.#getKey('enabled', recipeStr),
+            energy: this.#getKey('energy_required', recipeStr),
+            ingredients: this.#getObjKeys(
+                'ingredients',
+                ['type', 'name', 'amount'],
+                recipeStr
+            ),
+            results: this.#getObjKeys(
+                'results',
+                ['type', 'name', 'probability', 'amount'],
+                recipeStr
+            )
         }
-
-        const ingredientsStr = recipeStr.match(/ingredients.*{.*({.*})*.*},\n/s)[0];
-        const ingredients = ingredientsStr.matchAll(
-            /{type *= *"(.+?)", *name *= *"(.+?)", *amount *= *(.+?)},?/g);
-        out.ingredients = [];
-        for (const ingredient of ingredients) {
-            out.ingredients.push({
-                type: ingredient[1],
-                name: ingredient[2],
-                amount: parseInt(ingredient[3], 10),
-            });
-        }
-
-        if (/energy_required = (.*),/.test(recipeStr)){
-            out.energy = parseInt(recipeStr.match(
-                /energy_required = (.*),/)[1], 10);
-        }
-
-        const resultsStr = recipeStr.match(/results.*{.*({.*})*.*}/s)[0];
-        const results = resultsStr.matchAll(
-            /{type *= *"(.+?)", *name *= *"(.+?)", *amount *= *(.+?)},?/g);
-        out.results = [];
-            for (const result of results) {
-                out.results.push({
-                    type: result[1],
-                    name: result[2],
-                    amount: parseInt(result[3], 10),
-                });
-            }
-        return out;
     }
 
     #getRecipeStr() {
@@ -103,6 +84,33 @@ class RecipeParser {
             recipeStr += char;
         }
         return recipeStr;
+    }
+
+    #getKey(keyStr, str) {
+        const regex = new RegExp(`${keyStr} *= *(.+?)(,|}|\n)`);
+        if (!regex.test(str)) return null;
+        return this.#parse(str.match(regex)[1]);
+    }
+
+    #parse(str) {
+        return JSON.parse(`{"k": ${str}}`).k;
+    }
+
+    #getObjKeys(objKey, keys, str) {
+        const regex = new RegExp(
+            `${objKey} *= *\n? *{\n?(?: *{.*?},?\n?)*? *}`, 's');
+        if (!regex.test(str)) return null;
+        const matchStr = str.match(regex)[0];
+
+        keys = keys.filter(key => matchStr.includes(key));
+
+        const out = [];
+        matchStr.split(/, *\n? *{/s).forEach((resultStr, index) => {
+            out.push({ });
+            keys.forEach(key =>
+                out[index][key] = this.#getKey(key, resultStr));
+        });
+        return out;
     }
 
     close() {
