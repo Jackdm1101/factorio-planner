@@ -13,19 +13,19 @@ function main() {
     }
 
     const fd = fs.openSync('src/recipes.json', 'w+');
-    fs.writeSync(fd, Buffer.from('['));
+    fs.writeSync(fd, Buffer.from('{'));
 
     const parser = new RecipeParser(process.argv[2]);
     let recipe = parser.getNextRecipe();
     while (recipe) {
-        fs.writeSync(fd, Buffer.from(JSON.stringify(recipe)));
+        fs.writeSync(fd, Buffer.from(JSON.stringify(recipe).slice(1, -1)));
         recipe = parser.getNextRecipe();
         if (recipe)
             fs.writeSync(fd, Buffer.from(','));
     }
     parser.close();
 
-    fs.writeSync(fd, Buffer.from(']'));
+    fs.writeSync(fd, Buffer.from('}'));
     fs.closeSync(fd);
 }
 
@@ -53,24 +53,33 @@ class RecipeParser {
         if (!recipeStr) return null;
 
         const out = { };
-        out.name = this.#getKey('name', recipeStr);
+        const name = this.#getKey('name', recipeStr);
+        out[name] = { };
+
+        const category = this.#getKey('category', recipeStr);
+        if (category) out[name].category = category;
         
         const enabled = this.#getKey('enabled', recipeStr);
-        if (enabled) out.enabled = enabled;
+        if (enabled) out[name].enabled = enabled;
 
         const energy = this.#getKey('energy_required', recipeStr);
-        if (energy) out.energy = energy;
+        if (energy) out[name].energy = energy;
 
-        out.ingredients = this.#getObjKeys(
+        out[name].ingredients = this.#getObjKeys(
             'ingredients',
             ['type', 'name', 'amount'],
             recipeStr
         );
-        out.results = this.#getObjKeys(
+        out[name].results = this.#getObjKeys(
             'results',
             ['type', 'name', 'probability', 'amount'],
             recipeStr
         );
+
+        const allowProductivity = this.#getKey('allow_productivity', recipeStr);
+        if (allowProductivity) out[name].allowProductivity = allowProductivity;
+        
+        return out;
     }
 
     #getRecipeStr() {
