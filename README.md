@@ -9,6 +9,7 @@ This is a project to create a static website that can be used to plan your facto
 On first install:
 
 ```shell
+npm ci
 npm run genRecipes "<path/recipe.lua>"
 ```
 
