@@ -52,21 +52,25 @@ class RecipeParser {
         const recipeStr = this.#getRecipeStr();
         if (!recipeStr) return null;
 
-        return {
-            name: this.#getKey('name', recipeStr),
-            enabled: this.#getKey('enabled', recipeStr),
-            energy: this.#getKey('energy_required', recipeStr),
-            ingredients: this.#getObjKeys(
-                'ingredients',
-                ['type', 'name', 'amount'],
-                recipeStr
-            ),
-            results: this.#getObjKeys(
-                'results',
-                ['type', 'name', 'probability', 'amount'],
-                recipeStr
-            )
-        }
+        const out = { };
+        out.name = this.#getKey('name', recipeStr);
+        
+        const enabled = this.#getKey('enabled', recipeStr);
+        if (enabled) out.enabled = enabled;
+
+        const energy = this.#getKey('energy_required', recipeStr);
+        if (energy) out.energy = energy;
+
+        out.ingredients = this.#getObjKeys(
+            'ingredients',
+            ['type', 'name', 'amount'],
+            recipeStr
+        );
+        out.results = this.#getObjKeys(
+            'results',
+            ['type', 'name', 'probability', 'amount'],
+            recipeStr
+        );
     }
 
     #getRecipeStr() {
