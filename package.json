@@ -3,7 +3,8 @@
   
   "scripts": {
     "start": "http-server src -a 127.0.0.1 -p 8080",
-    "test": "jest"
+    "test": "jest",
+    "genRecipes": "node script/recipeToJson.js"
   },
   "devDependencies": {
     "jest": "^29.7.0",
