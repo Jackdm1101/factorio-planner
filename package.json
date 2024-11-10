@@ -1,15 +1,19 @@
 {
   "name": "factorio-planner",
-  
   "scripts": {
     "start": "http-server src -a 127.0.0.1 -p 8080",
-    "test": "jest",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "genRecipes": "node script/recipeToJson.js"
   },
-  "devDependencies": {
-    "jest": "^29.7.0",
-    "rewire": "^7.0.0",
+  "dependencies": {
     "http-server": "^14.1.1"
   },
-  "private": true
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "transform": {}
+  },
+  "private": true,
+  "type": "module"
 }
