@@ -5,5 +5,8 @@ export function validateInput(data) {
         typeof element.item === 'string' &&
         typeof element.perSec === 'number'
     )) return false;
+    if (typeof data.settings.crafterLv !== 'number' ||
+        typeof data.settings.furnaceLv !== 'number'
+    ) return false;
     return true;
 }
