@@ -1,6 +1,11 @@
 import recipes from './recipes.json' with { type: "json" };
 
-export function validateInput(data) {
+export function createProductionChain(data) {
+    if (!validateInput(data))
+        throw new Error('Invalid input data');
+}
+
+function validateInput(data) {
     if (!data.outputs.find(element => 
         typeof element.item === 'string' &&
         typeof element.perSec === 'number'

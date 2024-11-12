@@ -1,12 +1,13 @@
-import { validateInput } from '../src/main';
+import { createProductionChain } from '../src/main';
 
-test('validate accepts properly formed data', () => {
-    expect(validateInput({
+test('Invalid input data should be rejected', () => {
+    expect(() => { createProductionChain({
         outputs: [
-            { item: 'iron-gear-wheel', perSec: 1 }
+            { item: 'iron-gear-wheel', perSec: 1 },
+            { item: 1, wrongKey: 'wrong-type'}
         ],
         settings: {
-            crafterLv: 3, furnaceLv: 3
+            crafterLv: 3, furnaceLv: 'a'
         }
-    })).toBe(true);
+    })}).toThrow('Invalid input data');
 });
