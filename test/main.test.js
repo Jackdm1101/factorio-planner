@@ -1,13 +1,12 @@
-import { createProductionChain } from '../src/main';
+import { ProductionChain } from '../src/main';
 
-test('Invalid input data should be rejected', () => {
-    expect(() => { createProductionChain({
-        outputs: [
-            { item: 'iron-gear-wheel', perSec: 1 },
-            { item: 1, wrongKey: 'wrong-type'}
-        ],
-        settings: {
-            crafterLv: 3, furnaceLv: 'a'
-        }
-    })}).toThrow('Invalid input data');
+describe('ProductionChain', () => {
+    const chain = new ProductionChain;
+
+    describe('addProduct', () => {
+        it('should not add a product that does not exist', () => {
+            expect(() => chain.addProduct('invalid-product', 5)
+                .toThrow('Procuct not found'));
+        });
+    });
 });
