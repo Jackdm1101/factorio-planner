@@ -4,9 +4,10 @@ export class ProductionChain {
     #productsArr = [];
 
     addProduct(productStr, outputPerSec) {
-        if (typeof productStr !== 'string')
+        if (typeof productStr !== 'string' || typeof outputPerSec !== 'number')
             throw new Error('Unexpected type');
-        if (!recipes[productStr]) throw new Error(`Product ${productStr} not found`);
+        if (!recipes[productStr])
+            throw new Error(`Product ${productStr} not found`);
         this.#productsArr.push({product: productStr, outputPerSec});
     }
 };

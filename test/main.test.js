@@ -11,8 +11,14 @@ describe('ProductionChain', () => {
         });
 
         it.each(getTypesArrayExcept('string'))
-            (`should throw an error if a productStr is: %p`, (productStrInput) => {
+            (`should throw "Unexpected type" if productStr is: %p`, (productStrInput) => {
                 expect(() => chain.addProduct(productStrInput, 5))
+                    .toThrow('Unexpected type');
+            });
+
+        it.each(getTypesArrayExcept('number'))
+            (`should throw "Unexpected type" if outputPerSec is: %p`, (outputPerSec) => {
+                expect(() => chain.addProduct('speed-module', outputPerSec))
                     .toThrow('Unexpected type');
             });
     });
