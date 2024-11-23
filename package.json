@@ -12,7 +12,11 @@
     "jest": "^29.7.0"
   },
   "jest": {
-    "transform": {}
+    "transform": {},
+    "collectCoverageFrom": [
+      "src/**/*.js*"
+    ],
+    "coverageProvider": "v8" 
   },
   "private": true,
   "type": "module"
