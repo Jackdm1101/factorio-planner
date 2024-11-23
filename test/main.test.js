@@ -1,8 +1,12 @@
 import { ProductionChain } from '../src/main';
-import { getTypesArrayExcept } from './randomTestData';
+import { getTypesArrayExcept } from './testData';
 
 describe('Class: ProductionChain', () => {
-    const chain = new ProductionChain;
+    let chain;
+    
+    beforeEach(() => {
+        chain = new ProductionChain;
+    });
 
     describe('Method: addProduct()', () => {
         it('should not add a product that does not exist', () => {
@@ -30,6 +34,13 @@ describe('Class: ProductionChain', () => {
         it('should add a valid product with a valid output to the chain', () => {
             chain.addProduct('speed-module', 5);
             expect(chain.getProducts()).toEqual([{ product: 'speed-module', outputPerSec: 5 }]);
+        });
+    });
+
+    describe('Method: getRawMaterials()', () => {
+        it('should return 2 iron-plate per sec when given 1 iron-gear-wheel per sec', () => {
+            chain.addProduct('iron-gear-wheel', 1);
+            expect(chain.getRawMaterials()).toEqual([{ product: 'iron-plate', inputPerSec: 2 }]);
         });
     });
 });

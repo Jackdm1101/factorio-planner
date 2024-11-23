@@ -16,4 +16,17 @@ export class ProductionChain {
     getProducts() {
         return this.#productsArr;
     }
+
+    getRawMaterials() {
+        return this.#productsArr.reduce((acc, product) => {
+            const recipe = recipes[product.product];
+            recipe.ingredients.forEach(ingredient => {
+                acc.push({
+                    product: ingredient.name,
+                    inputPerSec: ingredient.amount
+                });
+            });
+            return acc;
+        }, []);
+    }
 };
