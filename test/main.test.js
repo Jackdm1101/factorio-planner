@@ -3,7 +3,7 @@ import { getTypesArrayExcept } from './testData';
 
 describe('Class: ProductionChain', () => {
     let chain;
-    
+
     beforeEach(() => {
         chain = new ProductionChain;
     });
@@ -41,6 +41,11 @@ describe('Class: ProductionChain', () => {
         it('should return 2 iron-plate per sec when given 1 iron-gear-wheel per sec', () => {
             chain.addProduct('iron-gear-wheel', 1);
             expect(chain.getRawMaterials()).toEqual([{ product: 'iron-plate', inputPerSec: 2 }]);
+        });
+
+        it('should return 20 iron-plate per sec when given 10 iron-gear-wheel per sec', () => {
+            chain.addProduct('iron-gear-wheel', 10);
+            expect(chain.getRawMaterials()).toEqual([{ product: 'iron-plate', inputPerSec: 20 }]);
         });
     });
 });

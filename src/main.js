@@ -23,7 +23,7 @@ export class ProductionChain {
             recipe.ingredients.forEach(ingredient => {
                 acc.push({
                     product: ingredient.name,
-                    inputPerSec: ingredient.amount
+                    inputPerSec: ingredient.amount * product.outputPerSec
                 });
             });
             return acc;
