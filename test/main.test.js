@@ -7,7 +7,7 @@ describe('Class: ProductionChain', () => {
     describe('Method: addProduct()', () => {
         it('should not add a product that does not exist', () => {
             expect(() => chain.addProduct('invalid-product', 5))
-                .toThrow(`Product invalid-product not found`);
+                .toThrow('Product "invalid-product" not found');
         });
 
         it.each(getTypesArrayExcept('string'))
@@ -21,5 +21,15 @@ describe('Class: ProductionChain', () => {
                 expect(() => chain.addProduct('speed-module', outputPerSec))
                     .toThrow('Unexpected type');
             });
+
+        it('should throw "Invalid outputPerSec" if given 0 or less', () => {
+            expect(() => chain.addProduct('speed-module', 0))
+                .toThrow('Invalid outputPerSec: 0');
+        });
+
+        it('should add a valid product with a valid output to the chain', () => {
+            chain.addProduct('speed-module', 5);
+            expect(chain.getProducts()).toEqual([{ product: 'speed-module', outputPerSec: 5 }]);
+        });
     });
 });
