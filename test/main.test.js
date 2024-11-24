@@ -64,7 +64,16 @@ describe('Class: ProductionChain', () => {
             expect(chain.getRawMaterials()).toEqual([
                 { product: 'pipe', outputPerSec: 5 },
                 { product: 'iron-plate', outputPerSec: 7.5 },
-                { product: 'iron-ore', outputPerSec: 7.5}
+                { product: 'iron-ore', outputPerSec: 7.5 }
+            ]);
+        });
+
+        it('should correctly return steps to produce 4 pipe-to-ground per sec', () => {
+            chain.addProduct('pipe-to-ground', 4);
+            expect(chain.getRawMaterials()).toEqual([
+                { product: 'pipe', outputPerSec: 20 },
+                { product: 'iron-plate', outputPerSec: 30 },
+                { product: 'iron-ore', outputPerSec: 30 }
             ]);
         });
     });
