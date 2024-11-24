@@ -38,14 +38,25 @@ describe('Class: ProductionChain', () => {
     });
 
     describe('Method: getRawMaterials()', () => {
-        it('should return 2 iron-plate per sec when given 1 iron-gear-wheel per sec', () => {
-            chain.addProduct('iron-gear-wheel', 1);
-            expect(chain.getRawMaterials()).toEqual([{ product: 'iron-plate', inputPerSec: 2 }]);
+        it('should return 5 stone per sec when given 1 stone-furnace per sec', () => {
+            chain.addProduct('stone-furnace', 1);
+            expect(chain.getRawMaterials()).toEqual([{ product: 'stone', outputPerSec: 5 }]);
         });
 
-        it('should return 20 iron-plate per sec when given 10 iron-gear-wheel per sec', () => {
-            chain.addProduct('iron-gear-wheel', 10);
-            expect(chain.getRawMaterials()).toEqual([{ product: 'iron-plate', inputPerSec: 20 }]);
+        it('should return 50 stone per sec when given 10 stone-furnace per sec', () => {
+            chain.addProduct('stone-furnace', 10);
+            expect(chain.getRawMaterials()).toEqual([{ product: 'stone', outputPerSec: 50 }]);
+        });
+
+        it('should return all the steps to produce electronic circuits', () => {
+            chain.addProduct('electronic-circuit', 1);
+            expect(chain.getRawMaterials()).toEqual([
+                { product: 'iron-plate', outputPerSec: 1 },
+                { product: 'copper-cable', outputPerSec: 3 },
+                { product: 'iron-ore', outputPerSec: 1 },
+                { product: 'copper-plate', outputPerSec: 1.5 },
+                { product: 'copper-ore', outputPerSec: 1.5 }
+            ])
         });
     });
 });

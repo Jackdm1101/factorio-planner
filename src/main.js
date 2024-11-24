@@ -18,15 +18,31 @@ export class ProductionChain {
     }
 
     getRawMaterials() {
-        return this.#productsArr.reduce((acc, product) => {
-            const recipe = recipes[product.product];
-            recipe.ingredients.forEach(ingredient => {
-                acc.push({
+        const materialsArr = [];
+        this.#productsArr.forEach(product => {
+            recipes[product.product].ingredients.forEach(ingredient => {
+                materialsArr.push({
                     product: ingredient.name,
-                    inputPerSec: ingredient.amount * product.outputPerSec
+                    outputPerSec: ingredient.amount * product.outputPerSec
                 });
             });
-            return acc;
-        }, []);
+        });
+        for (let i = 0; i < materialsArr.length; i += 1) {
+            const material = materialsArr[i];
+            const recipe = recipes[material.product];
+            if (recipe === undefined) continue;
+
+            recipe.ingredients.forEach(ingredient => {
+                const output = recipe.results.find(
+                    result => result.name === material.product
+                );
+                materialsArr.push({
+                    product: ingredient.name,
+                    outputPerSec: material.outputPerSec * (ingredient.amount / output.amount)
+                });
+            });
+        }
+        console.log(materialsArr);
+        return materialsArr;
     }
 };
