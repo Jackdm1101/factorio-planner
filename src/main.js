@@ -42,7 +42,6 @@ export class ProductionChain {
                 });
             });
         }
-        console.log(materialsArr);
         return materialsArr;
     }
 };
