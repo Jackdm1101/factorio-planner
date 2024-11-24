@@ -10,7 +10,7 @@ export class ProductionChain {
             throw new Error(`Invalid outputPerSec: ${outputPerSec}`);
         if (!recipes[productStr])
             throw new Error(`Product "${productStr}" not found`);
-        this.#productsArr.push({product: productStr, outputPerSec});
+        this.#productsArr.push({ product: productStr, outputPerSec });
     }
 
     getProducts() {
@@ -20,10 +20,14 @@ export class ProductionChain {
     getRawMaterials() {
         const materialsArr = [];
         this.#productsArr.forEach(product => {
-            recipes[product.product].ingredients.forEach(ingredient => {
+            const recipe = recipes[product.product];
+            recipe.ingredients.forEach(ingredient => {
+                const output = recipe.results.find(
+                    result => result.name === product.product
+                );
                 materialsArr.push({
                     product: ingredient.name,
-                    outputPerSec: ingredient.amount * product.outputPerSec
+                    outputPerSec: product.outputPerSec * (ingredient.amount / output.amount)
                 });
             });
         });
@@ -36,10 +40,19 @@ export class ProductionChain {
                 const output = recipe.results.find(
                     result => result.name === material.product
                 );
-                materialsArr.push({
-                    product: ingredient.name,
-                    outputPerSec: material.outputPerSec * (ingredient.amount / output.amount)
-                });
+
+                const index = materialsArr.findIndex(
+                    material => material.product === ingredient.name
+                );
+                if (index === -1) {
+                    materialsArr.push({
+                        product: ingredient.name,
+                        outputPerSec: material.outputPerSec * (ingredient.amount / output.amount)
+                    });
+                } else {
+                    materialsArr[index].outputPerSec +=
+                        material.outputPerSec * (ingredient.amount / output.amount);
+                }
             });
         }
         return materialsArr;

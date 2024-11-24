@@ -48,7 +48,7 @@ describe('Class: ProductionChain', () => {
             expect(chain.getRawMaterials()).toEqual([{ product: 'stone', outputPerSec: 50 }]);
         });
 
-        it('should return all the steps to produce electronic circuits', () => {
+        it('should correctly return steps to produce 1 electronic circuit per sec', () => {
             chain.addProduct('electronic-circuit', 1);
             expect(chain.getRawMaterials()).toEqual([
                 { product: 'iron-plate', outputPerSec: 1 },
@@ -57,6 +57,15 @@ describe('Class: ProductionChain', () => {
                 { product: 'copper-plate', outputPerSec: 1.5 },
                 { product: 'copper-ore', outputPerSec: 1.5 }
             ])
+        });
+
+        it('should correctly return steps to produce 1 pipe-to-ground per sec', () => {
+            chain.addProduct('pipe-to-ground', 1);
+            expect(chain.getRawMaterials()).toEqual([
+                { product: 'pipe', outputPerSec: 5 },
+                { product: 'iron-plate', outputPerSec: 7.5 },
+                { product: 'iron-ore', outputPerSec: 7.5}
+            ]);
         });
     });
 });
