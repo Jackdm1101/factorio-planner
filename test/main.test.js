@@ -56,7 +56,7 @@ describe('Class: ProductionChain', () => {
                 { product: 'iron-ore', outputPerSec: 1 },
                 { product: 'copper-plate', outputPerSec: 1.5 },
                 { product: 'copper-ore', outputPerSec: 1.5 }
-            ])
+            ]);
         });
 
         it('should correctly return steps to produce 1 pipe-to-ground per sec', () => {
@@ -75,6 +75,18 @@ describe('Class: ProductionChain', () => {
                 { product: 'iron-plate', outputPerSec: 30 },
                 { product: 'iron-ore', outputPerSec: 30 }
             ]);
+        });
+
+        it('should correctly create steps to make multiple products', () => {
+            chain.addProduct('transport-belt', 1);
+            chain.addProduct('offshore-pump', 1);
+            console.log('final run');
+            expect(chain.getRawMaterials()).toEqual(expect.arrayContaining([
+                { product: 'iron-plate', outputPerSec: 8.5 },
+                { product: 'iron-gear-wheel', outputPerSec: 2.5 },
+                { product: 'iron-ore', outputPerSec: 8.5 },
+                { product: 'pipe', outputPerSec: 3 }
+            ]));
         });
     });
 });
