@@ -1,5 +1,4 @@
-const { match } = require('node:assert');
-const fs = require('node:fs');
+import fs from 'fs';
 
 function main() {
     if (process.argv.length !== 3) {

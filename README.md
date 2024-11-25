@@ -27,6 +27,12 @@ Run unit tests:
 npm run test
 ```
 
+Run unit tests with coverage report:
+
+```shell
+npm run test -- --coverage
+```
+
 ## License
 
 GPL-3.0
