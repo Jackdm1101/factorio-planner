@@ -80,7 +80,7 @@ describe('Class: ProductionChain', () => {
         it('should correctly create steps to make multiple products', () => {
             chain.addProduct('transport-belt', 1);
             chain.addProduct('offshore-pump', 1);
-            console.log('final run');
+            // console.log('final run');
             expect(chain.getRawMaterials()).toEqual(expect.arrayContaining([
                 { product: 'iron-plate', outputPerSec: 8.5 },
                 { product: 'iron-gear-wheel', outputPerSec: 2.5 },
