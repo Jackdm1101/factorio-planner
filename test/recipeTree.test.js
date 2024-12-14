@@ -19,7 +19,7 @@ describe(RecipeTree.name, () => {
             ])
         });
 
-        it.only('should given 1 pipe-to-ground create expected tree', () => {
+        it('should given 1 pipe-to-ground create expected tree', () => {
             const tree = RecipeTree.create('pipe-to-ground', 1);
             expect(tree.getData()).toEqual([
                 { item: 'pipe-to-ground', perSec: 1, prev: [1,2] },
