@@ -54,4 +54,11 @@ describe(RecipeTree.name, () => {
                 .toThrow('Invalid outputPerSec: 0');
         });
     });
+
+    describe(RecipeTree.prototype.getRawList, () => {
+        it('should given 1 iron plate list 1 iron ore', () => {
+            const tree = RecipeTree.create('iron-plate', 1);
+            expect(tree.getRawList()).toEqual([{ item: 'iron-ore', perSec: 1 }]);
+        });
+    });
 });

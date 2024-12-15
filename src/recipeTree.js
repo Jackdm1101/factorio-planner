@@ -46,6 +46,14 @@ export class RecipeTree {
         }
     }
 
+    getRawList() {
+        return this.#nodes.reduce((acc, node) => {
+            if (node.prev.length === 0)
+                acc.push({ item: node.itemName, perSec: node.perSec });
+            return acc;
+        }, []);
+    }
+
     getData() {
         return this.#nodes;
     }
