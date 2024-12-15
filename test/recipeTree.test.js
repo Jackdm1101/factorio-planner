@@ -1,3 +1,4 @@
+import { getTypesArrayExcept } from './testData';
 import { RecipeTree } from '../src/recipeTree';
 
 describe(RecipeTree.name, () => {
@@ -29,6 +30,28 @@ describe(RecipeTree.name, () => {
                 { itemName: 'iron-ore', perSec: 2.5, prev: [] },
                 { itemName: 'iron-ore', perSec: 5, prev: [] }
             ])
+        });
+
+        it('should not add a product that does not exist', () => {
+            expect(() => RecipeTree.create('invalid-product', 5))
+                .toThrow('Product "invalid-product" not found');
+        });
+
+        it.each(getTypesArrayExcept('string'))
+            (`should throw "Unexpected type" if productStr is: %p`, (productStrInput) => {
+                expect(() => RecipeTree.create(productStrInput, 5))
+                    .toThrow('Unexpected type');
+            });
+
+        it.each(getTypesArrayExcept('number'))
+            (`should throw "Unexpected type" if outputPerSec is: %p`, (outputPerSec) => {
+                expect(() => RecipeTree.create('speed-module', outputPerSec))
+                    .toThrow('Unexpected type');
+            });
+
+        it('should throw "Invalid outputPerSec" if given 0 or less', () => {
+            expect(() => RecipeTree.create('speed-module', 0))
+                .toThrow('Invalid outputPerSec: 0');
         });
     });
 });

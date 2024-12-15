@@ -3,9 +3,20 @@ import recipes from './recipes.json' with { type: "json" };
 export class RecipeTree {
     #nodes = []
     static create(itemNameStr, itemsPerSec) {
+        this.#validate(itemNameStr, itemsPerSec);
+
         const tree = new RecipeTree;
         tree.#setup(itemNameStr, itemsPerSec);
         return tree;
+    }
+
+    static #validate(itemNameStr, itemsPerSec) {
+        if (typeof itemNameStr !== 'string' || typeof itemsPerSec !== 'number')
+            throw new Error('Unexpected type');
+        if (itemsPerSec <= 0)
+            throw new Error(`Invalid outputPerSec: ${itemsPerSec}`);
+        if (!recipes[itemNameStr])
+            throw new Error(`Product "${itemNameStr}" not found`);
     }
 
     #setup(itemNameStr, itemsPerSec) {
