@@ -58,7 +58,18 @@ describe(RecipeTree.name, () => {
     describe(RecipeTree.prototype.getRawList, () => {
         it('should given 1 iron plate list 1 iron ore', () => {
             const tree = RecipeTree.create('iron-plate', 1);
-            expect(tree.getRawList()).toEqual([{ item: 'iron-ore', perSec: 1 }]);
+            expect(tree.getRawList()).toEqual([{ itemName: 'iron-ore', perSec: 1 }]);
+        });
+
+        it('should correctly create list raw materials for ', () => {
+            const tree = RecipeTree.create('construction-robot', 1);
+            expect(tree.getRawList()).toEqual([
+                { "itemName": "iron-ore", "perSec": 23.8 },
+                { "itemName": "heavy-oil", "perSec": 15 },
+                { "itemName": "water", "perSec": 140 },
+                { "itemName": "copper-ore", "perSec": 12.5 },
+                { "itemName": "petroleum-gas", "perSec": 60 }
+            ]);
         });
     });
 });

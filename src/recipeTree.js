@@ -20,7 +20,7 @@ export class RecipeTree {
     }
 
     #setup(itemNameStr, itemsPerSec) {
-        this.#nodes.push({itemName: itemNameStr, perSec: itemsPerSec, prev: [] });
+        this.#nodes.push({ itemName: itemNameStr, perSec: itemsPerSec, prev: [] });
         const nodeIndicesQueue = [0];
 
         while (nodeIndicesQueue.length !== 0) {
@@ -47,10 +47,16 @@ export class RecipeTree {
     }
 
     getRawList() {
-        return this.#nodes.reduce((acc, node) => {
-            if (node.prev.length === 0)
-                acc.push({ item: node.itemName, perSec: node.perSec });
-            return acc;
+        return this.#nodes.reduce((rawList, node) => {
+            if (node.prev.length !== 0) return rawList;
+            
+            const rawListIndex = rawList.findIndex(raw => raw.itemName === node.itemName);
+            if (rawListIndex === -1) {
+                rawList.push({ itemName: node.itemName, perSec: node.perSec });
+            } else {
+                rawList[rawListIndex].perSec += node.perSec;
+            }
+            return rawList;
         }, []);
     }
 
